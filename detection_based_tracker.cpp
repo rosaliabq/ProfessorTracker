@@ -285,40 +285,40 @@ void DetectionBasedTracker::SeparateDetectionWork::workcycleObjectDetector()
 		int maxObjectSize=detectionBasedTracker.parameters.maxObjectSize;
 		Size max_objectSize(maxObjectSize, maxObjectSize);
 
-		//cascadeInThread.detectMultiScale( imageSeparateDetecting, objects,
-		//	detectionBasedTracker.parameters.scaleFactor, detectionBasedTracker.parameters.minNeighbors, 0
-		//	|CV_HAAR_SCALE_IMAGE
-		//	,
-		//	min_objectSize,
-		//	max_objectSize,
-		//	maskSeparateDetecting
-		//	);
+		cascadeInThread.detectMultiScale( imageSeparateDetecting, objects,
+			detectionBasedTracker.parameters.scaleFactor, detectionBasedTracker.parameters.minNeighbors, 0
+			|CV_HAAR_SCALE_IMAGE
+			,
+			min_objectSize,
+			max_objectSize,
+			maskSeparateDetecting
+			);
 
-		objects.clear();
+		//objects.clear();
 
-		ViolaJones *violaFrontal = new ViolaJones();
-		//ViolaJones *violaProfile = new ViolaJones(PROFILE_PATH, Size(20, 20), false, false);
-		//ViolaJones *violaProfileLeft = new ViolaJones(PROFILE_PATH, Size(20, 20), false, true);
+		//ViolaJones *violaFrontal = new ViolaJones();
+		////ViolaJones *violaProfile = new ViolaJones(PROFILE_PATH, Size(20, 20), false, false);
+		////ViolaJones *violaProfileLeft = new ViolaJones(PROFILE_PATH, Size(20, 20), false, true);
 
-		//violaProfileLeft->setMats(imageSeparateDetecting, maskSeparateDetecting);
-		//violaProfileLeft->go();
+		////violaProfileLeft->setMats(imageSeparateDetecting, maskSeparateDetecting);
+		////violaProfileLeft->go();
 
-		//violaProfile->setMats(imageSeparateDetecting, maskSeparateDetecting);
-		//violaProfile->go();
+		////violaProfile->setMats(imageSeparateDetecting, maskSeparateDetecting);
+		////violaProfile->go();
 
-		violaFrontal->setMats(imageSeparateDetecting, maskSeparateDetecting);
-		violaFrontal->go();
+		//violaFrontal->setMats(imageSeparateDetecting, maskSeparateDetecting);
+		//violaFrontal->go();
 
 
-		////pthread_join(violaFrontal->m_thread, NULL);
-		////pthread_join(violaProfile->m_thread, NULL);
-		////pthread_join(violaProfileLeft->m_thread, NULL);
-		violaFrontal->stop();
-		//violaProfileLeft->stop();
-		//violaProfile->stop();
+		//////pthread_join(violaFrontal->m_thread, NULL);
+		//////pthread_join(violaProfile->m_thread, NULL);
+		//////pthread_join(violaProfileLeft->m_thread, NULL);
+		//violaFrontal->stop();
+		////violaProfileLeft->stop();
+		////violaProfile->stop();
 
-		objects = violaFrontal->getResult();
-		//objects = join_vectors(violaProfile->getResult(), violaFrontal->getResult(), violaProfileLeft->getResult() );
+		//objects = violaFrontal->getResult();
+		////objects = join_vectors(violaProfile->getResult(), violaFrontal->getResult(), violaProfileLeft->getResult() );
 
 		LOGD("DetectionBasedTracker::SeparateDetectionWork::workcycleObjectDetector() --- end handling imageSeparateDetecting");
 
@@ -845,7 +845,20 @@ void DetectionBasedTracker::detectInRegion(const Mat& img, const Mat& mask, cons
 	int maxObjectSize = parameters.maxObjectSize;
 	Size max_objectSize(maxObjectSize, maxObjectSize);
 
-	cascadeForTracking.detectMultiScale( img1, tmpobjects,
+	//cascadeForTracking.detectMultiScale( img1, tmpobjects,
+	//	parameters.scaleFactor, parameters.minNeighbors,
+	//	0
+	//	|CV_HAAR_FIND_BIGGEST_OBJECT
+	//	|CV_HAAR_SCALE_IMAGE
+	//	,
+	//	Size(d,d),
+	//	max_objectSize,
+	//	mask1
+	//	);
+
+	CascadeClassifier cascadePerfil;
+	cascadePerfil.load(PROFILE_PATH);
+	cascadePerfil.detectMultiScale( img1, tmpobjects,
 		parameters.scaleFactor, parameters.minNeighbors,
 		0
 		|CV_HAAR_FIND_BIGGEST_OBJECT

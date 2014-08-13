@@ -17,8 +17,8 @@ using namespace cv;
 using namespace std;
 
 int main(){
-	string path="C:/Users/Rosalía/Desktop/Beca/combustibles.mp4";
-	VideoCapture capture(path);
+	//string path="combustibles.mp4";
+	VideoCapture capture(0);
 	if ( !capture.isOpened() )
 	{
 		cout << "Failed to open!\n" << endl;

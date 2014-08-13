@@ -9,8 +9,8 @@
 
 #include "ViolaJones.h"
 
-#define PROFILE_PATH "C:/Users/Rosalía/Desktop/Beca/haar/haarcascade_profileface.xml"
-#define FRONTAL_PATH "C:/Users/Rosalía/Desktop/Beca/haar/haarcascade_frontalface_alt.xml"
+#define PROFILE_PATH "haarcascade_profileface.xml"
+#define FRONTAL_PATH "haarcascade_frontalface_alt.xml"
 
 class DetectionBasedTracker
 {

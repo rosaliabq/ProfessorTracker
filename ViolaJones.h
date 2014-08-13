@@ -7,7 +7,7 @@
 
 using namespace cv;
 
-#define DEFAULT_PATH "C:/Users/Rosalía/Desktop/Beca/haar/haarcascade_frontalface_alt.xml"
+#define DEFAULT_PATH "haarcascade_frontalface_alt.xml"
 
 class ViolaJones : public Runnable {
 
