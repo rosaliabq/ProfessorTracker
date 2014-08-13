@@ -1,0 +1,35 @@
+﻿Compilación iniciada a las 12/08/2014 16:46:24.
+     1>Proyecto "C:\Users\Rosalía\Documents\Visual Studio 2012\Projects\Detection\Detection\Detection.vcxproj" en el nodo 2 (Build destinos).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\include /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc110.pdb" /Gd /TP /errorReport:prompt ViolaJones.cpp detection_based_tracker.cpp
+         ViolaJones.cpp
+         detection_based_tracker.cpp
+     1>detection_based_tracker.cpp(473): warning C4305: '=' : truncamiento de 'double' a 'float'
+     1>detection_based_tracker.cpp(474): warning C4305: '=' : truncamiento de 'double' a 'float'
+     1>detection_based_tracker.cpp(498): warning C4305: 'argumento' : truncamiento de 'double' a 'float'
+     1>detection_based_tracker.cpp(499): warning C4305: 'argumento' : truncamiento de 'double' a 'float'
+     1>detection_based_tracker.cpp(538): warning C4267: 'inicializando' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(581): warning C4267: 'argumento' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(595): warning C4267: 'argumento' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(627): warning C4267: 'inicializando' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(628): warning C4267: 'inicializando' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(646): warning C4267: 'inicializando' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(728): warning C4267: 'inicializando' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(757): warning C4267: 'inicializando' : conversión de 'size_t' a 'int'; posible pérdida de datos
+     1>detection_based_tracker.cpp(814): warning C4244: 'argumento' : conversión de 'double' a 'float'; posible pérdida de datos
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Rosalía\Documents\Visual Studio 2012\Projects\Detection\x64\Release\Detection.exe" /NOLOGO /LIBPATH:C:\opencv\build\x64\vc11\lib /LIBPATH:"C:\Users\Rosalía\Desktop\pthreads.2" pthreadVC2.lib opencv_core249.lib opencv_imgproc249.lib opencv_highgui249.lib opencv_ml249.lib opencv_video249.lib opencv_features2d249.lib opencv_calib3d249.lib opencv_objdetect249.lib opencv_contrib249.lib opencv_legacy249.lib opencv_flann249.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Rosalía\Documents\Visual Studio 2012\Projects\Detection\x64\Release\Detection.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Rosalía\Documents\Visual Studio 2012\Projects\Detection\x64\Release\Detection.lib" /MACHINE:X64 x64\Release\BackgroundSegmentation.obj
+         x64\Release\DetectionBased.obj
+         x64\Release\detection_based_tracker.obj
+         x64\Release\DrawResults.obj
+         x64\Release\main.obj
+         x64\Release\Runnable.obj
+         x64\Release\ViolaJones.obj
+         Generando código
+         Generación de código finalizada
+         Detection.vcxproj -> C:\Users\Rosalía\Documents\Visual Studio 2012\Projects\Detection\x64\Release\Detection.exe
+     1>Compilación del proyecto terminada "C:\Users\Rosalía\Documents\Visual Studio 2012\Projects\Detection\Detection\Detection.vcxproj" (Build destinos).
+
+Compilación correcta.
+
+Tiempo transcurrido 00:00:02.62
