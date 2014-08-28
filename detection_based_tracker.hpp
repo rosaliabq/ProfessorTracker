@@ -12,6 +12,8 @@
 #define PROFILE_PATH "haarcascade_profileface.xml"
 #define FRONTAL_PATH "haarcascade_frontalface_alt.xml"
 
+#define PROFILE_DETECTION 0
+
 class DetectionBasedTracker
 {
     public:

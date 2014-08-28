@@ -9,7 +9,8 @@ using namespace cv;
 
 #define DEFAULT_PATH "haarcascade_frontalface_alt.xml"
 
-class ViolaJones : public Runnable {
+class ViolaJones : public Runnable 
+{
 
 public:
 	ViolaJones();

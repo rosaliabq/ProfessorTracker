@@ -11,7 +11,7 @@ DetectionBased :: DetectionBased() : Runnable()
 	params_.scaleFactor = 1.05;
 
 	pathXml_="haarcascade_frontalface_alt.xml";
-	// haarcascade_frontalface_alt  lbpcascade_profileface
+
 	dbtObject_=new DetectionBasedTracker(pathXml_,params_);
 	dbtObject_->run();
 }

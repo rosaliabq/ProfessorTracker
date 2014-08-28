@@ -1,3 +1,6 @@
+#ifdef _WIN32 
+#define _CRT_SECURE_NO_DEPRECATE
+#endif 
 
 #include <stdio.h>
 #include <iostream>
@@ -10,14 +13,15 @@
 #include "BackgroundSegmentation.h"
 #include "DetectionBased.h"
 #include "DrawResults.h"
-
-#define SHOW_FOREGROUND 0
+#include "AdaptiveBackgroundLearning.h"
+#include "openTLD.h"
+#include "opticalFlow.h"
 
 using namespace cv;
 using namespace std;
 
 int main(){
-	//string path="combustibles.mp4";
+	string path="C:/Users/Rosalía/Desktop/Beca/combustibles.mp4";
 	VideoCapture capture(0);
 	if ( !capture.isOpened() )
 	{
@@ -28,39 +32,95 @@ int main(){
 	Mat frame, foreground, detectionMask;
 	vector<Rect> facesResult;
 
-	BackgroundSegmentation *bgSegmentation = new BackgroundSegmentation();
+	BackgroundSegmentation *bgSegmentation2 = new BackgroundSegmentation();
+	AdaptiveBackgroundLearning *bgSegmentation = new AdaptiveBackgroundLearning();
+
 	DetectionBased *dbTracker = new DetectionBased();
+
+	openTLD *tld = new openTLD();
+	opticalFlow *of = new opticalFlow();
+	bool init = false;
 
 	for (;;)
 	{
 		capture >> frame;
-		
+
 		if ( !frame.empty() )
 		{
-			if ( !bgSegmentation->isRunning() )
+			if (!ConfigFile::GetInstance()->getAdaptativeBg() )
 			{
-				foreground = bgSegmentation->getForeground();
-				bgSegmentation->setFrame(frame,  DrawResults::getInstance()->getdetectedMask() );
-				bgSegmentation->go();
+				if ( !bgSegmentation2->isRunning() )
+				{
+					foreground = bgSegmentation2->getForeground();
+					bgSegmentation2->setFrame(frame,  DrawResults::getInstance()->getdetectedMask() );
+					bgSegmentation2->go();
+				}
+			}
+			else
+			{
+				if (!bgSegmentation->isRunning() )
+				{
+					foreground = bgSegmentation->getResult();
+					if (!DrawResults::getInstance()->getdetectedMask().empty() )
+					{
+						foreground = foreground | DrawResults::getInstance()->getdetectedMask();
+					}
+					bgSegmentation->setFrame(frame);
+					bgSegmentation->go();
+				}
 			}
 
 			if ( !dbTracker->isRunning() )
 			{
 				facesResult.clear();
 				facesResult = dbTracker->getFaces();
-				Mat prueba = Mat::ones(frame.rows,frame.cols,CV_8UC1);
-				dbTracker->setFrameMask(frame, prueba);
+				dbTracker->setFrameMask(frame, foreground);
 				dbTracker->go();
 			}
 
-			DrawResults::getInstance()->draw(frame,facesResult);
-
-#if SHOW_FOREGROUND
-			if ( !foreground.empty() )
+			if (!init && facesResult.size()==1 )
 			{
-				imshow("Foreground", foreground);
-			}  
-#endif // SHOW_FOREGROUND
+				tld->setFrame(frame);
+				tld->init(facesResult[0]);
+				init = true;
+
+				of->setFrame(frame);
+				of->init(facesResult[0]);
+
+			}
+
+			if (init && !tld->isRunning() )
+			{
+				if (tld->getResult() != NULL )
+				{
+					rectangle(frame, *tld->getResult() , Scalar(255, 0, 255) , 2);
+				}
+				tld->setFrame(frame);
+				tld->go();
+
+			}
+
+			if (init && !of->isRunning() )
+			{
+				vector<Point2f> resultOf=of->getResult();
+				for (int i=0; i<resultOf.size(); i++)
+				{
+					circle(frame, resultOf[i], 2, Scalar(0, 255, 0));
+				}
+				of->setFrame(frame);
+				of->go();
+			}
+
+
+			DrawResults::getInstance()->draw(frame, facesResult);
+
+			if (ConfigFile::GetInstance()->getshowBackground() )
+			{
+				if ( !foreground.empty() )
+				{
+					imshow("Foreground", foreground);
+				}  
+			}
 
 		}else
 		{

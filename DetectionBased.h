@@ -10,6 +10,8 @@
 
 using namespace cv;
 
+#define PROFILE_DETECTION 1
+
 class DetectionBased : public Runnable 
 {
 public:

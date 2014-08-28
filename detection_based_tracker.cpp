@@ -285,6 +285,30 @@ void DetectionBasedTracker::SeparateDetectionWork::workcycleObjectDetector()
 		int maxObjectSize=detectionBasedTracker.parameters.maxObjectSize;
 		Size max_objectSize(maxObjectSize, maxObjectSize);
 
+#if PROFILE_DETECTION
+		objects.clear();
+
+		ViolaJones *violaFrontal = new ViolaJones();
+		ViolaJones *violaProfile = new ViolaJones(PROFILE_PATH, Size(20, 20), false, false);
+		ViolaJones *violaProfileLeft = new ViolaJones(PROFILE_PATH, Size(20, 20), false, true);
+
+		violaProfileLeft->setMats(imageSeparateDetecting, maskSeparateDetecting);
+		violaProfileLeft->go();
+
+		violaProfile->setMats(imageSeparateDetecting, maskSeparateDetecting);
+		violaProfile->go();
+
+		violaFrontal->setMats(imageSeparateDetecting, maskSeparateDetecting);
+		violaFrontal->go();
+
+		violaFrontal->stop();
+		violaProfileLeft->stop();
+		violaProfile->stop();
+
+		objects = violaFrontal->getResult();
+		objects = join_vectors(violaProfile->getResult(), violaFrontal->getResult(), violaProfileLeft->getResult() );
+
+#else
 		cascadeInThread.detectMultiScale( imageSeparateDetecting, objects,
 			detectionBasedTracker.parameters.scaleFactor, detectionBasedTracker.parameters.minNeighbors, 0
 			|CV_HAAR_SCALE_IMAGE
@@ -293,32 +317,7 @@ void DetectionBasedTracker::SeparateDetectionWork::workcycleObjectDetector()
 			max_objectSize,
 			maskSeparateDetecting
 			);
-
-		//objects.clear();
-
-		//ViolaJones *violaFrontal = new ViolaJones();
-		////ViolaJones *violaProfile = new ViolaJones(PROFILE_PATH, Size(20, 20), false, false);
-		////ViolaJones *violaProfileLeft = new ViolaJones(PROFILE_PATH, Size(20, 20), false, true);
-
-		////violaProfileLeft->setMats(imageSeparateDetecting, maskSeparateDetecting);
-		////violaProfileLeft->go();
-
-		////violaProfile->setMats(imageSeparateDetecting, maskSeparateDetecting);
-		////violaProfile->go();
-
-		//violaFrontal->setMats(imageSeparateDetecting, maskSeparateDetecting);
-		//violaFrontal->go();
-
-
-		//////pthread_join(violaFrontal->m_thread, NULL);
-		//////pthread_join(violaProfile->m_thread, NULL);
-		//////pthread_join(violaProfileLeft->m_thread, NULL);
-		//violaFrontal->stop();
-		////violaProfileLeft->stop();
-		////violaProfile->stop();
-
-		//objects = violaFrontal->getResult();
-		////objects = join_vectors(violaProfile->getResult(), violaFrontal->getResult(), violaProfileLeft->getResult() );
+#endif
 
 		LOGD("DetectionBasedTracker::SeparateDetectionWork::workcycleObjectDetector() --- end handling imageSeparateDetecting");
 
@@ -466,7 +465,7 @@ DetectionBasedTracker::Parameters::Parameters()
 DetectionBasedTracker::InnerParameters::InnerParameters()
 {
 	numLastPositionsToTrack=4;
-	numStepsToWaitBeforeFirstShow=6;
+	numStepsToWaitBeforeFirstShow=1;
 	numStepsToTrackWithoutDetectingIfObjectHasNotBeenShown=3;
 	numStepsToShowWithoutDetecting=3;
 
@@ -837,15 +836,51 @@ void DetectionBasedTracker::detectInRegion(const Mat& img, const Mat& mask, cons
 
 	Mat img1(img, r1);//subimage for rectangle -- without data copying
 	Mat mask1(mask, r1);
-	//  printf("DetectionBasedTracker::detectInRegion: img1.size()=%d x %d, d=%d %d\n",
-	//	img1.size().width, img1.size().height, d, cv::countNonZero(mask1));
+
 	LOGD("DetectionBasedTracker::detectInRegion: img1.size()=%d x %d, d=%d",
 		img1.size().width, img1.size().height, d);
 
 	int maxObjectSize = parameters.maxObjectSize;
 	Size max_objectSize(maxObjectSize, maxObjectSize);
 
-	//cascadeForTracking.detectMultiScale( img1, tmpobjects,
+
+#if PROFILE_DETECTION
+	tmpobjects.clear();
+
+	ViolaJones *violaFrontal = new ViolaJones(FRONTAL_PATH,	Size(d, d ), true, false );
+	ViolaJones *violaProfile = new ViolaJones(PROFILE_PATH, Size(d, d ), true, false );
+	ViolaJones *violaProfileLeft = new ViolaJones(PROFILE_PATH, Size(d, d ), true, true );
+
+	violaProfileLeft->setMats(img1, mask1);
+	violaProfileLeft->go();
+
+	violaProfile->setMats(img1, mask1);
+	violaProfile->go();
+
+	violaFrontal->setMats(img1, mask1);
+	violaFrontal->go();
+
+	violaFrontal->stop();
+	violaProfileLeft->stop();
+	violaProfile->stop();
+
+	tmpobjects = join_vectors(violaProfile->getResult(), violaFrontal->getResult(), violaProfileLeft->getResult() );
+#else
+	cascadeForTracking.detectMultiScale( img1, tmpobjects,
+		parameters.scaleFactor, parameters.minNeighbors,
+		0
+		|CV_HAAR_FIND_BIGGEST_OBJECT
+		|CV_HAAR_SCALE_IMAGE
+		,
+		Size(d,d),
+		max_objectSize,
+		mask1
+		);
+#endif
+
+	//CascadeClassifier cascadePerfil;
+	//cascadePerfil.load(PROFILE_PATH);
+	//cascadePerfil.detectMultiScale( img1, tmpobjects,
 	//	parameters.scaleFactor, parameters.minNeighbors,
 	//	0
 	//	|CV_HAAR_FIND_BIGGEST_OBJECT
@@ -856,43 +891,6 @@ void DetectionBasedTracker::detectInRegion(const Mat& img, const Mat& mask, cons
 	//	mask1
 	//	);
 
-	CascadeClassifier cascadePerfil;
-	cascadePerfil.load(PROFILE_PATH);
-	cascadePerfil.detectMultiScale( img1, tmpobjects,
-		parameters.scaleFactor, parameters.minNeighbors,
-		0
-		|CV_HAAR_FIND_BIGGEST_OBJECT
-		|CV_HAAR_SCALE_IMAGE
-		,
-		Size(d,d),
-		max_objectSize,
-		mask1
-		);
-
-	//tmpobjects.clear();
-
-	////   Size(d, cvRound(1.7*d) )
-	//ViolaJones *violaFrontal = new ViolaJones(FRONTAL_PATH,	Size(d, d ), true, false );
-	//ViolaJones *violaProfile = new ViolaJones(PROFILE_PATH, Size(d, d ), true, false );
-	//ViolaJones *violaProfileLeft = new ViolaJones(PROFILE_PATH, Size(d, d ), true, true );
-
-	//violaProfileLeft->setMats(img1, mask1);
-	//violaProfileLeft->go();
-
-	//violaProfile->setMats(img1, mask1);
-	//violaProfile->go();
-
-	//violaFrontal->setMats(img1, mask1);
-	//violaFrontal->go();
-
-	////pthread_join(violaFrontal->m_thread, NULL);
-	////pthread_join(violaProfile->m_thread, NULL);
-	////pthread_join(violaProfileLeft->m_thread, NULL);
-	//violaFrontal->stop();
-	//violaProfileLeft->stop();
-	//violaProfile->stop();
-
-	//tmpobjects = join_vectors(violaProfile->getResult(), violaFrontal->getResult(), violaProfileLeft->getResult() );
 
 	for(size_t i=0; i < tmpobjects.size(); i++) 
 	{

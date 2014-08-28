@@ -7,7 +7,8 @@ DrawResults* DrawResults :: pDrawResults= 0;
 DrawResults* DrawResults :: getInstance()
 {
 
-	if (!pDrawResults) {
+	if (!pDrawResults) 
+	{
 		pDrawResults = new DrawResults();
 	}
 	return pDrawResults;
@@ -17,7 +18,7 @@ DrawResults* DrawResults :: getInstance()
 DrawResults :: DrawResults()
 {
 	detectedMask_ = Mat();
-	bodyMask = true;
+	bodyMask = ConfigFile::GetInstance()->getbodyMask(); //ConfigFile::GetInstance()->getbodyMask();
 }
 
 Mat DrawResults :: getdetectedMask()
