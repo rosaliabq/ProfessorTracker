@@ -3,6 +3,7 @@
 #endif 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 
 #include <opencv2\core\core.hpp>
@@ -14,14 +15,18 @@
 #include "DetectionBased.h"
 #include "DrawResults.h"
 #include "AdaptiveBackgroundLearning.h"
-#include "openTLD.h"
 #include "opticalFlow.h"
+#include "openTLD.h"
+//#include "MultiTLD.h"
+#include "CMT.h"
+
 
 using namespace cv;
 using namespace std;
 
-int main(){
-	string path="C:/Users/Rosalía/Desktop/Beca/combustibles.mp4";
+int main()
+{
+	//string path="C:/Users/Rosalía/Desktop/Beca/combustibles.mp4";
 	VideoCapture capture(0);
 	if ( !capture.isOpened() )
 	{
@@ -37,9 +42,16 @@ int main(){
 
 	DetectionBased *dbTracker = new DetectionBased();
 
-	openTLD *tld = new openTLD();
 	opticalFlow *of = new opticalFlow();
+
+	openTLD *tld = new openTLD();
+
+	//MultiTLD *mtld = new MultiTLD();
+
+	CMT *cmt = new CMT();
+
 	bool init = false;
+	bool initCmt = false;
 
 	for (;;)
 	{
@@ -78,15 +90,35 @@ int main(){
 				dbTracker->go();
 			}
 
+			//if (!mtld->isRunning())
+			//{
+			//mtld->setFrame(frame);
+			//mtld->go();
+			//}
+			//rectangle(frame, mtld->getResult(), Scalar(204, 0, 102), 4);
+
 			if (!init && facesResult.size()==1 )
 			{
 				tld->setFrame(frame);
 				tld->init(facesResult[0]);
+
 				init = true;
 
 				of->setFrame(frame);
 				of->init(facesResult[0]);
 
+				/*mtld->setFrame(frame);
+				mtld->init(facesResult[0]);*/
+
+			}
+
+			if (!initCmt && facesResult.size()==1 )
+			{
+				cmt->initialise(frame, facesResult[0].tl(), facesResult[0].br() );
+				if (cmt->getInit() )
+				{
+					initCmt = true;
+				}
 			}
 
 			if (init && !tld->isRunning() )
@@ -97,7 +129,6 @@ int main(){
 				}
 				tld->setFrame(frame);
 				tld->go();
-
 			}
 
 			if (init && !of->isRunning() )
@@ -111,6 +142,15 @@ int main(){
 				of->go();
 			}
 
+			if (init && !cmt->isRunning() )
+			{
+				if (cmt->getHasResult() )
+				{
+					rectangle(frame, cmt->getBox(), Scalar(204, 0, 102), 2);
+				}
+				cmt->setFrame(frame);
+				cmt->go();
+			}
 
 			DrawResults::getInstance()->draw(frame, facesResult);
 
@@ -137,3 +177,5 @@ int main(){
 	return 0;
 
 }
+
+

@@ -110,7 +110,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\opencv\build\include;C:\Users\Rosalía\libconfig-1.4.9\lib;C:\Users\Rosalía\Documents\GitHub\OpenTLD\src\libopentld\tld</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Rosalía\Documents\GitHub\OpenTLD\src\libopentld;C:\opencv\build\include;C:\Users\Rosalía\libconfig-1.4.9\lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="AdaptiveBackgroundLearning.cpp" />
     <ClCompile Include="BackgroundSegmentation.cpp" />
+    <ClCompile Include="CMT.cpp" />
     <ClCompile Include="ConfigFile.cpp" />
     <ClCompile Include="DetectionBased.cpp" />
     <ClCompile Include="detection_based_tracker.cpp" />
@@ -136,10 +137,12 @@
   <ItemGroup>
     <ClInclude Include="AdaptiveBackgroundLearning.h" />
     <ClInclude Include="BackgroundSegmentation.h" />
+    <ClInclude Include="CMT.h" />
     <ClInclude Include="ConfigFile.h" />
     <ClInclude Include="DetectionBased.h" />
     <ClInclude Include="detection_based_tracker.hpp" />
     <ClInclude Include="DrawResults.h" />
+    <ClInclude Include="MultiTLD.h" />
     <ClInclude Include="openTLD.h" />
     <ClInclude Include="opticalFlow.h" />
     <ClInclude Include="Runnable.h" />
